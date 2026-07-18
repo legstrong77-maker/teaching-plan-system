@@ -16,30 +16,30 @@ router.get('/', async (req, res) => {
 
 // 提交新的表單數據
 router.post('/', async (req, res) => {
-  console.log('收到表單提交:', req.body);  // 添加日誌
+  console.log('收到表單提交:', req.body);
 
   try {
     // 驗證必要字段
-    const requiredFields = ['name', 'email', 'childAge', 'venue', 'message'];
-    for (const field of requiredFields) {
-      if (!req.body[field]) {
-        throw new Error(`缺少必要字段: ${field}`);
-      }
+    const requiredFields = ['name', 'email', 'childType', 'venue'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+    
+    if (missingFields.length > 0) {
+      throw new Error(`缺少必要字段: ${missingFields.join(', ')}`);
     }
 
     const formData = new FormData({
       name: req.body.name,
       email: req.body.email,
-      childAge: req.body.childAge,
+      childType: req.body.childType,
       venue: req.body.venue,
-      message: req.body.message
+      message: req.body.message || ''
     });
 
     const newFormData = await formData.save();
-    console.log('表單數據已保存:', newFormData._id);  // 添加日誌
+    console.log('表單數據已保存:', newFormData._id);
     
     // 生成分析結果
-    const analysis = `已收到 ${formData.name} 的教案需求，將為 ${formData.childAge} 歲的孩子在 ${formData.venue} 設計適合的教案。`;
+    const analysis = `已收到 ${formData.name} 的教案需求，將為 ${formData.childType} 的孩子在 ${formData.venue} 設計適合的教案。`;
     
     newFormData.analysis = analysis;
     await newFormData.save();
@@ -50,8 +50,12 @@ router.post('/', async (req, res) => {
       formData: newFormData
     });
   } catch (err) {
-    console.error('表單提交錯誤:', err);  // 添加錯誤日誌
-    res.status(400).json({ message: err.message });
+    console.error('表單提交錯誤:', err);
+    res.status(400).json({ 
+      message: err.message,
+      error: err.toString(),
+      requestBody: req.body
+    });
   }
 });
 

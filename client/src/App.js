@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+// API URL 配置
+const API_URL = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://teaching-plan-system-api.vercel.app' 
+    : 'http://localhost:5000'
+  );
+
 function App() {
   const [formData, setFormData] = useState({
     name: '',
@@ -22,8 +29,7 @@ function App() {
 
   const fetchHistory = async () => {
     try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}/api/form-data`, {
+      const response = await fetch(`${API_URL}/api/form-data`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json'
@@ -85,14 +91,12 @@ function App() {
 
     try {
       console.log('正在提交表單數據:', formData);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await fetch(`${apiUrl}/api/form-data`, {
+      const response = await fetch(`${API_URL}/api/form-data`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        credentials: 'include',
         mode: 'cors',
         body: JSON.stringify({
           name: formData.name,

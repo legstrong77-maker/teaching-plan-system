@@ -9,7 +9,7 @@ const formDataSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  childAge: {
+  childType: {
     type: String,
     required: true
   },
@@ -19,7 +19,7 @@ const formDataSchema = new mongoose.Schema({
   },
   message: {
     type: String,
-    required: true
+    required: false
   },
   analysis: {
     type: String,
